@@ -120,7 +120,7 @@ export default function Home() {
                 </div>
             </div><br /><br /><br />
 
-
+        
 
             <div class="text-center">
                 <h1 class="text-3xl font-bold">About TravelDost</h1>
