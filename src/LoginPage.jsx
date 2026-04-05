@@ -4,8 +4,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../services/authService';
 import { Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react' // <--- Added ArrowLeft
 
-
-
 export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
