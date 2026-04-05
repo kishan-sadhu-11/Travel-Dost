@@ -4,6 +4,7 @@ import { registerUser } from '../services/authService';
 import { supportedLanguages } from '../utils/countryLanguages';
 import { Mail, Lock, ArrowRight, User, Languages, ArrowLeft } from 'lucide-react'
 
+
 export function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
