@@ -1,135 +1,195 @@
-import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Shield, MapPin, AlertTriangle, Phone, CheckCircle2,
+  RefreshCw, Info, Plane, Calendar, Briefcase
+} from 'lucide-react'
+import { DashboardLayout } from '../components/layout'
+import { InteractiveMap, Skeleton } from '../components/ui'
+import { useDashboard } from '../hooks'
 
-export default function Home() {
-    const [toggle, setTog] = useState(true);
-    const ontog = () => {
-        const a = !toggle
-        setTog(a)
-    }
+export function Dashboard() {
+  const {
+    location,
+    zoom,
+    loading,
+    countryData,
+    error,
+    upcomingTrip,
+    tripEmergencyData,
+    detectLocation
+  } = useDashboard()
 
-    const [bg, setBg] = useState(true);
-    const changebg = () => {
-        const b = !bg;
-        setBg(b)
-        if (bg == true) {
-            document.body.style.backgroundColor = "#020617"
-            document.body.style.color = "white"
-            document.body.style.transitionDuration = "100"
-        }
-        else {
-            document.body.style.backgroundColor = "white"
-            document.body.style.color = "black"
-            document.body.style.transitionDuration = "100"
-        }
-    }
+  const formatDate = (dateStr) => {
+    if (!dateStr) return ''
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
+  }
 
+  const getDaysUntilTrip = (startDate) => {
+    if (!startDate) return 0
+    const start = new Date(startDate)
+    const today = new Date()
+    const diffTime = start - today
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  }
 
-
-    return (
-        <>
-
-            <header class={`flex  md:visible md:justify-around justify-between fixed top-0 left-0 w-full bg-white  shadow-md z-50 ${bg == true ? "text-black" : "text-black"}`}>
-                <p class={`text-black items-center md:static fixed flex text-2xl font-extrabold  ${bg == true ? "text-black" : "text-black"}`}><img src="./src/image.png" class="h-15" alt="" />Travel Dost</p>
-                <nav class="flex md:visible">
-                    <ul class={`flex md:flex-row md:flex md:ml-0 ${toggle == true ? "hidden" : "visible"} md:mt-0 md:mb-0 mt-15 mb-3  flex-col gap-10 items-center text-[20px] font-semibold`}>
-                        <li><a href="" class=" hover:text-blue-600">Features</a></li>
-                        <li><a href="" class="hover:text-blue-600">How It Works</a></li>
-                        <li><a href="" class="hover:text-blue-600">About</a></li>
-                        <li class="pr-10 hover:text-blue-600"><a href="">Contact</a></li>
-
-                        <div class="flex gap-5">
-                            <button onClick={changebg} class="hover:bg-gray-100 pl-5 pr-5 pt-2 pb-2 rounded-[10px]">Dark / Light</button>
-                            <a href="" class={`${bg == true ? "hover:bg-gray-100" : "dark"} pl-5 pr-5 pt-2 pb-2 rounded-[10px]`}>Login</a>
-                            <a href="" class="rounded-lg bg-sky-900 px-4 py-2 text-[20px] font-medium text-white transition-colors hover:bg-sky-700 dark:bg-sky-600 dark:hover:bg-sky-500">Sign Up Free</a>
-                        </div>
-                    </ul>
-                </nav>
-                <img src="./src/image.png" onClick={ontog} class="h-15 md:hidden visible" alt="" />
-            </header>
-
-            <div class="p-5 md:flex mt-17 relative -z-1 items-center justify-evenly">
-                <div class="mt-0">
-                    <p class="w-auto text-7xl font-extrabold">Explore the World  <p class="text-blue-800">Without Fear</p></p><br />
-                    <p class="text-2xl md:w-[800px] w-auto">Your smart travel companion that auto-detects your location to provide instant emergency numbers, regional rules, language tools, and local insights. Travel safe, travel smart.</p><br />
-                    <a href="" class=" rounded-lg bg-sky-900 px-4 py-2 text-[20px] font-medium text-white transition-colors hover:bg-sky-700 dark:bg-sky-600 dark:hover:bg-sky-500">Start Your Journey {"=>"}</a>
-                    <a href="" class="ml-5 rounded-lg p-4 border bg-white hover:bg-gray-100">Learn More</a>
-                </div><br />
+  return (
+    <DashboardLayout>
+      <div className="space-y-8">
+        {/* Upcoming Trip Banner */}
+        {upcomingTrip && (
+          <div className="bg-gradient-to-r from-violet-600 to-indigo-600 dark:from-violet-900 dark:to-indigo-900 rounded-2xl p-6 shadow-lg shadow-violet-600/20 animate-fade-in">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-xl bg-white/20 flex items-center justify-center">
+                  <Plane className="h-6 w-6 text-white" />
+                </div>
                 <div>
-                    <img class="h-[600px] w-full w-fit" src="./src/one.png" alt="" />
+                  <p className="text-white/80 text-sm font-medium">Upcoming Trip</p>
+                  <h2 className="text-xl font-bold text-white">{upcomingTrip.destination}</h2>
+                  <div className="flex items-center gap-3 mt-1 text-white/70 text-sm">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {formatDate(upcomingTrip.start_date)} - {formatDate(upcomingTrip.end_date)}
+                    </span>
+                    <span className="bg-white/20 px-2 py-0.5 rounded-full text-xs">
+                      {getDaysUntilTrip(upcomingTrip.start_date)} days away
+                    </span>
+                  </div>
                 </div>
-            </div><br />
+              </div>
 
-
-
-            <div class="text-center items-center">
-                <h2 class="text-5xl font-bold">Everything You Need to Travel Safe</h2>
-                <p class="text-2xl">Powerful features designed to keep you informed, prepared, and confident wherever your adventures take you.</p><br /><br />
-
-                <div class="flex justify-evenly text-start">
-                    <div class="w-[440px] h-[270px] p-5 shadow-xl border-[1px] border-gray-200 rounded-3xl hover:shadow-2xl hover:border-blue-400 ">
-                        <h2 class="text-2xl font-bold">Smart Location Detection</h2>
-                        <p class="text-[19px]">Automatically detects your location and provides region-specific information instantly.</p>
-                    </div>
-                    <div class="w-[440px] h-[270px] p-5 shadow-xl border-[1px] border-gray-200 rounded-3xl  hover:shadow-2xl hover:border-blue-400 ">
-                        <h2 class="text-2xl font-bold">Smart Location Detection</h2>
-                        <p class="text-[19px]">Automatically detects your location and provides region-specific information instantly.</p>
-                    </div>
-                    <div class="w-[440px] h-[270px] p-5 shadow-xl border-[1px] border-gray-200 rounded-3xl  hover:shadow-2xl hover:border-blue-400 ">
-                        <h2 class="text-2xl font-bold">Smart Location Detection</h2>
-                        <p class="text-[19px]">Automatically detects your location and provides region-specific information instantly.</p>
-                    </div>
+              {tripEmergencyData && (
+                <div className="flex gap-4">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+                    <p className="text-white/60 text-xs">Police</p>
+                    <p className="text-white font-bold">{tripEmergencyData.police || '--'}</p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+                    <p className="text-white/60 text-xs">Ambulance</p>
+                    <p className="text-white font-bold">{tripEmergencyData.ambulance || '--'}</p>
+                  </div>
                 </div>
-            </div><br /><br />
+              )}
 
-            <div class="text-center items-center">
-                <div class="flex justify-evenly text-start">
-                    <div class="w-[440px] h-[270px] p-5 shadow-xl border-[1px] border-gray-200 rounded-3xl hover:shadow-2xl hover:border-blue-400 ">
-                        <h2 class="text-2xl font-bold">Smart Location Detection</h2>
-                        <p class="text-[19px]">Automatically detects your location and provides region-specific information instantly.</p>
+              <Link
+                to="/checklist"
+                className="flex items-center gap-2 bg-white text-violet-700 px-4 py-2 rounded-xl font-medium hover:bg-white/90 transition-colors"
+              >
+                <Briefcase className="h-4 w-4" />
+                Trip Checklist
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Header Section */}
+        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+              Travel Guide
+            </h1>
+            <p className="mt-1 text-slate-600 dark:text-slate-400">
+              Local customs and emergency information for your destination
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => detectLocation(true)}
+              disabled={loading}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-sky-600/90 hover:bg-sky-700 text-white rounded-xl shadow-lg shadow-sky-600/20 backdrop-blur-sm transition-all disabled:opacity-50"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              {loading ? 'Locating...' : 'Refresh Location'}
+            </button>
+          </div>
+        </header>
+
+        {/* Map Section */}
+        {loading ? (
+          <Skeleton className="h-96 w-full rounded-2xl" />
+        ) : (
+          <div className="animate-fade-in">
+            <InteractiveMap lat={location.lat} lng={location.lng} zoom={zoom} />
+          </div>
+        )}
+
+        {/* Location Info Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-xl border border-white/50 dark:border-slate-800/50 shadow-sm animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+              <MapPin className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wide">
+                Current Location
+              </p>
+              {loading ? (
+                <Skeleton className="h-6 w-32 mt-1" />
+              ) : (
+                <p className="text-base font-bold text-slate-900 dark:text-white">
+                  {`${location.city || 'Unknown'}, ${location.country}`}
+                </p>
+              )}
+            </div>
+          </div>
+          {error && (
+            <div className="text-xs bg-red-50 text-red-600 px-3 py-1 rounded-full font-medium border border-red-100">
+              ⚠️ {error}
+            </div>
+          )}
+        </div>
+
+        {/* Content Grid */}
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                <Shield className="h-4 w-4 text-red-600 dark:text-red-400" />
+              </div>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Emergency Contacts</h2>
+            </div>
+            <div className="space-y-3">
+              {['Police', 'Ambulance'].map((type) => (
+                <div key={type} className="p-4 border border-white/50 dark:border-slate-800/50 rounded-xl hover:border-red-200 dark:hover:border-red-900/50 hover:bg-red-50/50 dark:hover:bg-red-900/10 transition-all bg-white/60 dark:bg-slate-900/60 backdrop-blur-md shadow-sm">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <Phone className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{type}</span>
                     </div>
-                    <div class="w-[440px] h-[270px] p-5 shadow-xl border-[1px] border-gray-200 rounded-3xl  hover:shadow-2xl hover:border-blue-400 ">
-                        <h2 class="text-2xl font-bold">Smart Location Detection</h2>
-                        <p class="text-[19px]">Automatically detects your location and provides region-specific information instantly.</p>
-                    </div>
-                    <div class="w-[440px] h-[270px] p-5 shadow-xl border-[1px] border-gray-200 rounded-3xl  hover:shadow-2xl hover:border-blue-400 ">
-                        <h2 class="text-2xl font-bold">Smart Location Detection</h2>
-                        <p class="text-[19px]">Automatically detects your location and provides region-specific information instantly.</p>
-                    </div>
+                    <span className="text-xl font-bold text-red-600 dark:text-red-400 tabular-nums">
+                      {countryData?.emergency[type.toLowerCase()] || '--'}
+                    </span>
+                  </div>
                 </div>
-            </div><br /><br /><br />
+              ))}
+            </div>
+          </div>
 
-
-
-            <div class="text-center">
-                <h1 class="text-3xl font-bold">How It Works</h1>
-                <p class="text-[23px]">Start exploring the world safely in three simple steps.</p><br />
-
-                <div class="flex justify-evenly text-start">
-                    <div class="w-[440px] h-[270px] p-5 shadow-xl border-[1px] border-gray-200 rounded-3xl hover:shadow-2xl hover:border-blue-400 ">
-                        <h2 class="text-2xl font-bold">Smart Location Detection</h2>
-                        <p class="text-[19px]">Automatically detects your location and provides region-specific information instantly.</p>
-                    </div>
-                    <div class="w-[440px] h-[270px] p-5 shadow-xl border-[1px] border-gray-200 rounded-3xl  hover:shadow-2xl hover:border-blue-400 ">
-                        <h2 class="text-2xl font-bold">Smart Location Detection</h2>
-                        <p class="text-[19px]">Automatically detects your location and provides region-specific information instantly.</p>
-                    </div>
-                    <div class="w-[440px] h-[270px] p-5 shadow-xl border-[1px] border-gray-200 rounded-3xl  hover:shadow-2xl hover:border-blue-400 ">
-                        <h2 class="text-2xl font-bold">Smart Location Detection</h2>
-                        <p class="text-[19px]">Automatically detects your location and provides region-specific information instantly.</p>
-                    </div>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              </div>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Local Customs</h2>
+            </div>
+            <div className="space-y-2">
+              {Array.isArray(countryData?.rules) && countryData.rules.map((rule, idx) => (
+                <div key={idx} className="flex gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-amber-100 transition-colors">
+                  <CheckCircle2 className="h-4 w-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                  <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{rule}</p>
                 </div>
-            </div><br /><br /><br />
-
-        
-
-            <div class="text-center">
-                <h1 class="text-3xl font-bold">About TravelDost</h1>
-                <div class="text-center">
-                    <p class="ml-100 mr-100 text-[22px]">Born from a 6th Semester Major Project, TravelDost aims to make tourism safer and smarter. We believe that lack of local knowledge shouldn't be a barrier to exploration. By combining geolocation technology with a curated database of local rules and emergency contacts, we empower travelers to visit new places with confidence.</p>
+              ))}
+              {!countryData && !loading && (
+                <div className="flex items-center justify-center gap-2 p-8 text-slate-400 border border-dashed border-slate-200 rounded-xl">
+                  <Info className="h-4 w-4" />
+                  <span className="text-sm">Information unavailable</span>
                 </div>
-            </div><br /><br /><br />
-        </>
-    );
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </DashboardLayout>
+  )
 }
-
-
